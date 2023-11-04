@@ -19,6 +19,13 @@ const client = new MongoClient(uri, {
     }
 });
 
+// Custom middlewares
+const logger = async (req, res, next) => {
+    console.log('called: ', req.hostname, req.originalUrl);
+    console.log('log: info', req.method, req.url);
+    next();
+}
+
 async function run() {
     try {
         // Auth related API
@@ -55,7 +62,7 @@ async function run() {
         catch (error) {
             console.log(error);
         }
-        
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
