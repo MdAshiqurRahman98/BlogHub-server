@@ -53,6 +53,7 @@ const verifyToken = async (req, res, next) => {
 
 async function run() {
     try {
+        const blogCollection = client.db('blogDB').collection('blogs');
         // Auth related API
         try {
             app.post('/jwt', logger, async (req, res) => {
@@ -82,6 +83,30 @@ async function run() {
                 const user = req.body;
                 console.log('Logging out', user);
                 res.clearCookie('token', { maxAge: 0 }).send({ success: true });
+            })
+        }
+        catch (error) {
+            console.log(error);
+        }
+
+        // Blogs related APIs
+        try {
+            app.get('/blogs', async (req, res) => {
+                const cursor = productsCollection.find();
+                const result = await cursor.toArray();
+                res.send(result);
+            })
+        }
+        catch (error) {
+            console.log(error);
+        }
+
+        try {
+            app.post('/blogs', async (req, res) => {
+                const newProduct = req.body;
+                console.log(newProduct);
+                const result = await productsCollection.insertOne(newProduct);
+                res.send(result);
             })
         }
         catch (error) {
