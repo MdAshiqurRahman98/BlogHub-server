@@ -92,7 +92,7 @@ async function run() {
         // Blogs related APIs
         try {
             app.get('/blogs', async (req, res) => {
-                const cursor = productsCollection.find();
+                const cursor = blogCollection.find();
                 const result = await cursor.toArray();
                 res.send(result);
             })
@@ -103,9 +103,9 @@ async function run() {
 
         try {
             app.post('/blogs', async (req, res) => {
-                const newProduct = req.body;
-                console.log(newProduct);
-                const result = await productsCollection.insertOne(newProduct);
+                const newBlog = req.body;
+                console.log(newBlog);
+                const result = await blogCollection.insertOne(newBlog);
                 res.send(result);
             })
         }
