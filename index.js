@@ -91,9 +91,9 @@ async function run() {
 
         // Blogs related APIs
         try {
-            app.get('/blogs', async (req, res) => {
+            app.get('/all-blogs', async (req, res) => {
                 const cursor = blogCollection.find();
-                const result = await cursor.toArray();
+                const result = await cursor.sort({ timestamp: -1 }).toArray();
                 res.send(result);
             })
         }
@@ -102,8 +102,9 @@ async function run() {
         }
 
         try {
-            app.post('/blogs', async (req, res) => {
+            app.post('/add-blog', async (req, res) => {
                 const newBlog = req.body;
+                newBlog.timestamp = new Date();
                 console.log(newBlog);
                 const result = await blogCollection.insertOne(newBlog);
                 res.send(result);
@@ -114,7 +115,7 @@ async function run() {
         }
 
         try {
-            app.patch('/blogs/:id', async (req, res) => {
+            app.patch('/update-blog/:id', async (req, res) => {
                 const id = req.params.id;
                 const filter = { _id: new ObjectId(id) };
                 const updatedBlog = req.body;
