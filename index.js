@@ -55,7 +55,7 @@ async function run() {
     try {
         const blogCollection = client.db('blogDB').collection('blogs');
         const wishlistCollection = client.db('blogDB').collection('wishlist');
-        
+
         // Auth related API
         try {
             app.post('/jwt', logger, async (req, res) => {
@@ -141,6 +141,33 @@ async function run() {
         }
 
         // Wishlist related APIs
+        try {
+            app.get('/user-wishlist', logger, verifyToken, async (req, res) => {
+                console.log(req.query.email);
+                // console.log('Token', req.cookies.token);
+                console.log('User of the valid token', req.user);
+
+                if (req.query.email !== req.user.email) {
+                    return res.status(403).send({ message: 'forbidden access' });
+                }
+
+                // let query = {};
+                // if (req.query?.email) {
+                //     query = { email: req.query.email };
+                // }
+                let query = {};
+                if (req.cookies?.email) {
+                    query = { email: req.cookies.email };
+                }
+                const cursor = wishlistCollection.find(query);
+                const result = await cursor.toArray();
+                res.send(result);
+            })
+        }
+        catch (error) {
+            console.log(error);
+        }
+
         try {
             app.post('/add-to-wishlist', async (req, res) => {
                 const wishlist = req.body;
