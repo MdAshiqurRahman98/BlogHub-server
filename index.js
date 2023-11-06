@@ -54,6 +54,8 @@ const verifyToken = async (req, res, next) => {
 async function run() {
     try {
         const blogCollection = client.db('blogDB').collection('blogs');
+        const wishlistCollection = client.db('blogDB').collection('wishlist');
+        
         // Auth related API
         try {
             app.post('/jwt', logger, async (req, res) => {
@@ -131,6 +133,19 @@ async function run() {
                 }
 
                 const result = await blogCollection.updateOne(filter, blog);
+                res.send(result);
+            })
+        }
+        catch (error) {
+            console.log(error);
+        }
+
+        // Wishlist related APIs
+        try {
+            app.post('/add-to-wishlist', async (req, res) => {
+                const wishlist = req.body;
+                console.log(wishlist);
+                const result = await wishlistCollection.insertOne(wishlist);
                 res.send(result);
             })
         }
