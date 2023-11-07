@@ -104,6 +104,18 @@ async function run() {
         }
 
         try {
+            app.get('/blog/:id', async (req, res) => {
+                const id = req.params.id;
+                const query = { _id: new ObjectId(id) };
+                const result = await blogCollection.findOne(query);
+                res.send(result);
+            })
+        }
+        catch (error) {
+            console.log(error);
+        }
+
+        try {
             app.post('/add-blog', async (req, res) => {
                 const newBlog = req.body;
                 newBlog.timestamp = new Date();
@@ -142,7 +154,7 @@ async function run() {
 
         // Wishlist related APIs
         try {
-            app.get('/user-wishlist', logger, verifyToken, async (req, res) => {
+            app.get('/wishlist', logger, verifyToken, async (req, res) => {
                 console.log(req.query.email);
                 // console.log('Token', req.cookies.token);
                 console.log('User of the valid token', req.user);
@@ -161,6 +173,18 @@ async function run() {
                 }
                 const cursor = wishlistCollection.find(query);
                 const result = await cursor.toArray();
+                res.send(result);
+            })
+        }
+        catch (error) {
+            console.log(error);
+        }
+
+        try {
+            app.get('/blog-from-wishlist/:id', async (req, res) => {
+                const id = req.params.id;
+                const query = { _id: new ObjectId(id) };
+                const result = await wishlistCollection.findOne(query);
                 res.send(result);
             })
         }
