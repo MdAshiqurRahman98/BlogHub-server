@@ -136,11 +136,11 @@ async function run() {
 
                 const blog = {
                     $set: {
-                        title: updatedProduct.title,
-                        image: updatedProduct.image,
-                        category: updatedProduct.category,
-                        shortDescription: updatedProduct.shortDescription,
-                        longDescription: updatedProduct.longDescription
+                        title: updatedBlog.title,
+                        image: updatedBlog.image,
+                        category: updatedBlog.category,
+                        shortDescription: updatedBlog.shortDescription,
+                        longDescription: updatedBlog.longDescription
                     }
                 }
 
