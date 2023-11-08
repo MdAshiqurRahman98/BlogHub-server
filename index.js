@@ -55,6 +55,7 @@ async function run() {
     try {
         const blogCollection = client.db('blogDB').collection('blogs');
         const wishlistCollection = client.db('blogDB').collection('wishlist');
+        const commentCollection = client.db('blogDB').collection('comments');
 
         // Auth related API
         try {
@@ -121,6 +122,17 @@ async function run() {
                 const result = await cursor.toArray();
                 res.send(result);
             });
+        }
+        catch (error) {
+            console.log(error);
+        }
+
+        try {
+            app.get('/featured-blogs', async (req, res) => {
+                const cursor = blogCollection.find();
+                const result = await cursor.sort({ timestamp: -1 }).toArray();
+                res.send(result);
+            })
         }
         catch (error) {
             console.log(error);
@@ -252,10 +264,32 @@ async function run() {
                 if (req.query.email !== req.user.email) {
                     return res.status(403).send({ message: 'forbidden access' });
                 }
-                
+
                 const id = req.params.id;
                 const query = { _id: new ObjectId(id) }
                 const result = await wishlistCollection.deleteOne(query);
+                res.send(result);
+            })
+        }
+        catch (error) {
+            console.log(error);
+        }
+
+        // Comment related APIs
+        try {
+            app.post('/add-comment', logger, verifyToken, async (req, res) => {
+                console.log(req.query.email);
+                // console.log('Token', req.cookies.token);
+                console.log('User of the valid token', req.user);
+
+                if (req.query.email !== req.user.email) {
+                    return res.status(403).send({ message: 'forbidden access' });
+                }
+
+                const newComment = req.body;
+                newComment.timestamp = new Date();
+                console.log(newComment);
+                const result = await commentCollection.insertOne(newComment);
                 res.send(result);
             })
         }
