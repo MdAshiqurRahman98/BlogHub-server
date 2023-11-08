@@ -104,6 +104,29 @@ async function run() {
         }
 
         try {
+            app.get("/all-blogs/search", async (req, res) => {
+                const filter = req.query;
+                console.log(filter);
+                const query = {
+                    title: { $regex: filter.search, $options: 'i' }
+                };
+
+                const options = {
+                    sort: {
+                        title: filter.sort === 'asc' ? 1 : -1
+                    }
+                };
+
+                const cursor = blogCollection.find(query, options);
+                const result = await cursor.toArray();
+                res.send(result);
+            });
+        }
+        catch (error) {
+            console.log(error);
+        }
+
+        try {
             app.get('/blog/:id', async (req, res) => {
                 const id = req.params.id;
                 const query = { _id: new ObjectId(id) };
@@ -116,7 +139,15 @@ async function run() {
         }
 
         try {
-            app.post('/add-blog', async (req, res) => {
+            app.post('/add-blog', logger, verifyToken, async (req, res) => {
+                console.log(req.query.email);
+                // console.log('Token', req.cookies.token);
+                console.log('User of the valid token', req.user);
+
+                if (req.query.email !== req.user.email) {
+                    return res.status(403).send({ message: 'forbidden access' });
+                }
+
                 const newBlog = req.body;
                 newBlog.timestamp = new Date();
                 console.log(newBlog);
@@ -129,7 +160,15 @@ async function run() {
         }
 
         try {
-            app.patch('/update-blog/:id', async (req, res) => {
+            app.patch('/update-blog/:id', logger, verifyToken, async (req, res) => {
+                console.log(req.query.email);
+                // console.log('Token', req.cookies.token);
+                console.log('User of the valid token', req.user);
+
+                if (req.query.email !== req.user.email) {
+                    return res.status(403).send({ message: 'forbidden access' });
+                }
+
                 const id = req.params.id;
                 const filter = { _id: new ObjectId(id) };
                 const updatedBlog = req.body;
@@ -205,7 +244,15 @@ async function run() {
         }
 
         try {
-            app.delete('/remove-from-wishlist/:id', async (req, res) => {
+            app.delete('/remove-from-wishlist/:id', logger, verifyToken, async (req, res) => {
+                console.log(req.query.email);
+                // console.log('Token', req.cookies.token);
+                console.log('User of the valid token', req.user);
+
+                if (req.query.email !== req.user.email) {
+                    return res.status(403).send({ message: 'forbidden access' });
+                }
+                
                 const id = req.params.id;
                 const query = { _id: new ObjectId(id) }
                 const result = await wishlistCollection.deleteOne(query);
