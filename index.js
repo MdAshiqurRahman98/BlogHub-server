@@ -215,7 +215,7 @@ async function run() {
                 }
 
                 // let query = {};
-                // if (req.query?.email) {
+                // if (req?.query?.email) {
                 //     query = { email: req.query.email };
                 // }
                 let query = {};
@@ -276,6 +276,30 @@ async function run() {
         }
 
         // Comment related APIs
+        try {
+            app.get('/all-comments', logger, verifyToken, async (req, res) => {
+                console.log(req.query.email);
+                // console.log('Token', req.cookies.token);
+                console.log('User of the valid token', req.user);
+
+                if (req.query.email !== req.user.email) {
+                    return res.status(403).send({ message: 'forbidden access' });
+                }
+
+                let query = {};
+                if (req?.query?._id) {
+                    query = { _id: req.query._id };
+                }
+
+                const cursor = commentCollection.find(query);
+                const result = await cursor.sort({ timestamp: -1 }).toArray();
+                res.send(result);
+            })
+        }
+        catch (error) {
+            console.log(error);
+        }
+
         try {
             app.post('/add-comment', logger, verifyToken, async (req, res) => {
                 console.log(req.query.email);
