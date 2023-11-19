@@ -57,7 +57,7 @@ async function run() {
         const wishlistCollection = client.db('blogDB').collection('wishlist');
         const commentCollection = client.db('blogDB').collection('comments');
 
-        // Auth related API
+        // Auth related APIs
         try {
             app.post('/jwt', logger, async (req, res) => {
                 const user = req.body;
@@ -288,7 +288,7 @@ async function run() {
 
                 let query = {};
                 if (req?.query?._id) {
-                    query = { _id: req.query._id };
+                    query = { blogId: req.query._id };
                 }
 
                 const cursor = commentCollection.find(query);
